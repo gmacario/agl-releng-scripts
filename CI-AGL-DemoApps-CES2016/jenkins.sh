@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# debugging purposes
+set -e
+set -x
+
 # create shared downloads and sstate-cache directory
 mkdir -p downloads
 mkdir -p sstate-cache
