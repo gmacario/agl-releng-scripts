@@ -66,7 +66,7 @@ cp tmp/deploy/images/qemu*/*qemux86*.vmdk archive/
 cp ../../current_default.xml archive/
 cp conf/local.conf archive/
 
-tar -C tmp/deploy -cf archive licenses.tar licenses
+tar -C tmp/deploy -cf archive/licenses.tar licenses
 
 echo "We provide the repo default.xml in the file current_default.xml."   > archive/README.sources
 echo "This will pull down the yocto layers used to build this snapshot." >> archive/README.sources
