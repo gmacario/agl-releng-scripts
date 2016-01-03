@@ -41,7 +41,7 @@ echo 'ARCHIVER_MODE[src] = "original"' >> conf/local.conf
 echo 'IMAGE_INSTALL_append = " CES2016-demo mc"' >> conf/local.conf
 
 if test x"qemux86" == x"$MACHINE" -o x"qemux86-64" == x"$MACHINE" ; then
- echo 'IMAGE_FSTYPES += "vmdk"' >> conf/local.conf
+ echo 'IMAGE_FSTYPES = "tar.bz2 vmdk"' >> conf/local.conf
 fi
 
 
