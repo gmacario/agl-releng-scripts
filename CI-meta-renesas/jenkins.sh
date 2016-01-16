@@ -2,7 +2,7 @@
 
 # debugging purposes
 set -e
-set -x
+#set -x
 
 # create shared downloads and sstate-cache directory
 mkdir -p downloads
@@ -10,42 +10,62 @@ mkdir -p sstate-cache
 
 # remove old files, we want to test a fresh clone
 mv repoclone repoclone2 || true
-( nice rm -rf repoclone2 & ) || true
-mkdir repoclone
+( ionice rm -rf repoclone2 & ) || true
+mkdir -p repoclone
 cd repoclone
 
 # check if master or branch
 if test x"" != x"$GERRIT_BRANCH"; then
-  repo init -b $GERRIT_BRANCH -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo
+  # special for meta-renesas ...
+  if test x"agl-1.0-bsp-1.8.0" == x"$GERRIT_BRANCH" ; then
+    export REPOCLONE=master
+  else
+    export REPOCLONE="$GERRIT_BRANCH"
+  fi
+  repo init -q -b $REPOCLONE -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo
 else
   echo ""
   echo "####################################################"
   echo "ATTENTION: NO GERRIT_BRANCH, using master by default"
   echo "####################################################"
   echo ""
-  repo init  -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo
+  repo init -q -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo
 fi
 
 # next: repo sync and dump manifest
-repo sync
+repo sync --force-sync --detach --no-clone-bundle
 
 # fix up this branch
-cd meta-renesas
+MYPROJECT=`echo $JOB_NAME | sed -e "s#CI-##g"`
+cd $MYPROJECT
 
 # we need to inject the git ref of GERRIT_PATCHSET_REVISION to the recipe
-if test x"" != x"${GERRIT_PATCHSET_REVISION}" ; then
-  git reset --hard ${GERRIT_PATCHSET_REVISION}
+if test x"" != x"${GERRIT_REFSPEC}" ; then
+  MYREMOTE=`git remote | head -1`
+  git fetch $MYREMOTE ${GERRIT_REFSPEC}
+  git reset --hard FETCH_HEAD
+#  git status
+#  git log -1
 else
   echo "Something is wrong, we have no GERRIT_PATCHSET_REVISION. Exit."
   exit 1
 fi
 
+cd ..
 
 repo manifest -r
 repo manifest -r > ../current_default.xml
 
+if x"meta-renesas" == x"$MYPROJECT" ; then
+export MACHINE=porter
+fi
+
+if test x"" == x"$MACHINE" ; then
+export MACHINE=qemux86
+fi
+
 # source the env
-source meta-agl/scripts/envsetup.sh porter
+source meta-agl/scripts/envsetup.sh $MACHINE
 
 # link the shared downloads and sstate-cache
 ln -sf ../../downloads
