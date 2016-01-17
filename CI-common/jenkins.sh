@@ -36,7 +36,7 @@ fi
 repo sync --force-sync --detach --no-clone-bundle
 
 # fix up this branch
-MYPROJECT=`echo $JOB_NAME | sed -e "s#CI-##g"`
+MYPROJECT=`echo $JOB_NAME | sed -e "s#CI-##g" -e "s#external-##g"`
 cd $MYPROJECT
 
 # we need to inject the git ref of GERRIT_PATCHSET_REVISION to the recipe
