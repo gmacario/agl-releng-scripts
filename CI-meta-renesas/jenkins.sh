@@ -56,7 +56,7 @@ cd ..
 repo manifest -r
 repo manifest -r > ../current_default.xml
 
-if x"meta-renesas" == x"$MYPROJECT" ; then
+if test x"meta-renesas" == x"$MYPROJECT" ; then
 export MACHINE=porter
 fi
 
