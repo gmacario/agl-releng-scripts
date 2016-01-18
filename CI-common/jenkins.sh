@@ -9,8 +9,9 @@ mkdir -p downloads
 mkdir -p sstate-cache
 
 # remove old files, we want to test a fresh clone
-mv repoclone repoclone2 || true
-( ionice rm -rf repoclone2 & ) || true
+export XTMP="$$"
+mv repoclone repoclone$XTMP || true
+( rm -rf repoclone$XTMP & ) || true
 mkdir -p repoclone
 cd repoclone
 
