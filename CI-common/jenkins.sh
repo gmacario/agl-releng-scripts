@@ -79,7 +79,7 @@ bitbake agl-demo-platform || exit 1
 du -hs tmp/deploy/*
 
 # create the archive
-mkdir archive
+mkdir -p archive
 cp ../../current_default.xml archive/
 cp conf/local.conf archive/
 tar -C tmp/deploy -cf archive/licenses.tar licenses
